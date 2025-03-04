@@ -1,0 +1,259 @@
+
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: auto; /* Allows page scrolling */
+    background: #f4f4f9; /* Background color for the entire page */
+}
+
+.container {
+    width: 21cm;
+    min-height: auto;
+    padding: 20px;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+header h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 0; 
+    margin-bottom: 20px; 
+}
+
+.report-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+.report-section h2 {
+    font-size: 20px; 
+    text-align: left; 
+    margin: 0;
+    padding-bottom: 10px;
+
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+input[type="text"], input[type="date"], textarea {
+    width: 100%; 
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+}
+
+.layerGroup {
+    height: 100%;
+    width: 100%;
+}
+
+.layerGroup canvas{
+    height: 100%;
+        width: 100%;
+}
+textarea {
+    width: 100%;
+    height: 80px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none; 
+}
+
+.finding-row {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.finding-row label {
+    width: 100px;
+}
+
+.textarea-wrapper {
+    position: relative;
+}
+
+.textarea-wrapper textarea {
+    width: calc(100% - 120px);
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #D3D3D3;
+   
+}
+.findings-container textarea {
+    width: 100%;
+    height: 40px; 
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none;
+}
+
+.hidden-textarea {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    visibility: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.report-section:last-child {
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.report-section:last-child h2 {
+    font-size: 16px;
+    color: #656262;
+    margin: 0;
+}
+
+
+/* Save and Download Buttons */
+.button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.save-button, .download-button , .submit-button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.save-button:hover, .download-button:hover {
+    background-color: #45a049;
+}
+
+/* Mobile Phones */
+@media (max-width: 600px) {
+    .save-button, .download-button {
+        padding: 8px 16px;
+        font-size: 14px;
+        margin: 0 5px;
+    }
+}
+
+/* iPad */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .save-button, .download-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 0 10px;
+    }
+}
+
+/* Landscape Orientation */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .save-button, .download-button {
+        padding: 8px 16px;
+        font-size: 14px;
+        margin: 0 5px;
+    }
+}
+
+@media print {
+    body {
+        background: #fff;
+    }
+
+    .container {
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    @page {
+        size: A4;
+        margin: 20mm;
+    }
+
+    th, td {
+        padding: 6px;
+    }
+}
+/* Mobile Phones */
+@media (max-width: 600px) {
+    .container {
+        width: 100%; 
+        margin: 0;
+        padding: 10px;
+    }
+
+    header h1, .report-section h2 {
+        font-size: 18px; 
+    }
+
+    table, th, td {
+        padding: 6px; 
+    }
+
+    input[type="text"], input[type="date"], textarea {
+        padding: 4px; 
+    }
+
+    textarea {
+        height: 60px; 
+    }
+}
+
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .container {
+        width: 90%; 
+        padding: 15px; 
+    }
+
+    header h1, .report-section h2 {
+        font-size: 20px; 
+    }
+
+    table, th, td {
+        padding: 8px; 
+    }
+
+    textarea {
+        height: 70px; 
+    }
+}

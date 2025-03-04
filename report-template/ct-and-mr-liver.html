@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CT and MR Liver - LI-RADS</title>
+        <meta charset="UTF-8" />
+        <meta name="dcterms.identifier" content="2782cafe-4898-4c05-b101-761aa3b86aaf" />
+        <meta name="dcterms.title" content="CT and MR Liver - LI-RADS" />
+        <meta name="dcterms.description" content="" />
+        <meta name="dcterms.type" content="IMAGE_REPORT_TEMPLATE" />
+        <meta name="dcterms.language" content="en" />
+        <meta name="dcterms.publisher" content="" />
+        <meta name="dcterms.rights" content="May be used freely, subject to license agreement" />
+        <meta name="dcterms.license" content="http://www.radreport.org/license.pdf" />
+        <meta name="dcterms.date" content="2021-07-21" />
+        <meta name="dcterms.creator" content="Teresa Margarida Cunha" />
+        <script type="text/xml">
+            <template_attributes>
+                <coded_content>
+                    <coding_schemes>
+                        <coding_scheme name="RADLEX" designator="2.16.840.1.113883.6.256"></coding_scheme>
+                        <coding_scheme name="LOINC" designator="2.16.840.1.113883.6.1"></coding_scheme>
+                    </coding_schemes>
+                    <entry origtxt="findings">
+                        <term>
+                            <code meaning="Procedure Findings" value="59776-5" scheme="LOINC"></code>
+                        </term>
+                    </entry>
+                    <entry origtxt="RADIO_1626100865761_0">
+                        <term>
+                            <code meaning="yes" value="http://radlex.org/RID/RID28474" scheme="RADLEX"></code>
+                        </term>
+                    </entry>
+                    <entry origtxt="procedureInformation">
+                        <term>
+                            <code meaning="Current Imaging Procedure Description" value="55111-9" scheme="LOINC"></code>
+                        </term>
+                    </entry>
+                    <entry origtxt="comparisons">
+                        <term>
+                            <code meaning="Radiology Comparison Study" value="18834-2" scheme="LOINC"></code>
+                        </term>
+                    </entry>
+                    <entry origtxt="impression">
+                        <term>
+                            <code meaning="Impressions" value="19005-8" scheme="LOINC"></code>
+                        </term>
+                    </entry>
+                    <entry origtxt="clinicalInformation">
+                        <term>
+                            <code meaning="Clinical Information" value="55752-0" scheme="LOINC"></code>
+                        </term>
+                    </entry>
+                </coded_content>
+            </template_attributes>
+        </script>
+        <!-- CSS only -->
+        <script src=
+"https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity=
+"sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" 
+        crossorigin="anonymous">
+    </script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous" rel="stylesheet">
+
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>	 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.1/html2pdf.bundle.min.js" integrity="sha512vDKWohFHe2vkVWXHp3tKvIxxXg0pJxeid5eo+UjdjME3DBFBn2F8yWOE0XmiFcFbXxrEOR1JriWEno5Ckpn15A==" crossorigin="anonymous">
+</script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js" integrity="sha512vDKWohFHe2vkVWXHp3tKvIxxXg0pJxeid5eo+UjdjME3DBFBn2F8yWOE0XmiFcFbXxrEOR1JriWEno5Ckpn15A==" crossorigin="anonymous">
+</script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+<script src="Report_Timestamp.js"></script>
+<style>
+    textarea {
+        width: -webkit-fill-available;
+    }
+    #form-print{
+    width: 80%;
+    padding: 11px;
+    background-color: #7e7e7e59;
+    border: 2px solid darkgray;
+    margin-right: auto;
+    margin: auto;
+    }
+    .titleH3{
+        padding: 10px;
+        text-align: center;
+        text-decoration-line: underline;
+    }
+
+    label {
+        font-weight: 600;
+    }
+</style>
+</head>
+    <body style="background-color: inherit;">
+
+        <script>
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            let FirebasePath = urlParams.get('path');
+            const doctorName = urlParams.get("DoctorName");
+      
+            const pathArray = FirebasePath.split('/');
+            const patient = pathArray[pathArray.length - 2];   
+            const patientParts = patient.split('-').map(part => part.trim());
+            let formattedPatientName;
+          
+            // More robust check for repeated "Patient" parts
+            if (patientParts.length > 2 && patientParts[0].toLowerCase() === "patient" && patientParts[1].toLowerCase() === "patient") {
+              // If 'Patient' is repeated, format as "Patient - [Last Part]"
+              formattedPatientName = patientParts.slice(2).join(' - ');
+            } else {
+              // Use the name after "Patient -", or the full name if the condition doesn't match
+              formattedPatientName = patientParts.slice(1).join(' - ');
+            }
+          
+            console.log("Formatted patient name ---", formattedPatientName); 
+          
+            // Set the formatted name to the input element once the DOM is fully loaded
+            document.addEventListener("DOMContentLoaded", function() {
+              const inputElement = document.querySelector('input[type="text"]');
+              if(inputElement) { // Check if the input element exists
+                inputElement.value = formattedPatientName;
+              }
+            });
+          </script>
+
+
+        <form  id="form-print" enctype="text/plain" class="form-control">
+            <h3 class="titleH3">CT and MR Liver</h3>
+            <h6 id="patientName">Patient Name: <input type="text"></h6>
+
+    
+      
+        <section id="procedureInformation" class="level1" data-section-name="Procedure Information">
+            <header class="level1">
+                Procedure Information :-
+            </header>
+            <p title="">
+                <label for="RADIO_1626100865748">Modality :-</label>
+                <span id="RADIO_1626100865748" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865748_0" type="radio" name="RADIO_1626100865748" value="CT" checked="">CT</input>
+                    <br />
+                    <input id="RADIO_1626100865748_1" type="radio" name="RADIO_1626100865748" value="MRI">MRI</input>
+                </span>
+            </p>
+            <p title="If applicable.">
+                <label for="NUMBER_1626100865742">Number of CT detectors </label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865742" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626878201560">MRI field strength :-</label>
+                <span id="RADIO_1626878201560" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626878201560_0" type="radio" name="RADIO_1626878201560" value="1.5T" checked="">1.5T</input>
+                    <br />
+                    <input id="RADIO_1626878201560_1" type="radio" name="RADIO_1626878201560" value="3T">3T</input>
+                </span>
+            </p>
+            <p title="If modality is CT, radiation dose is required in the United States.">
+                <label for="NUMBER_1626100865744">Radiation dose</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865744" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865751">Type of contrast agent :-</label>
+                <span id="RADIO_1626100865751" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865751_0" type="radio" name="RADIO_1626100865751" value="iodinated (CT)" checked="">iodinated (CT)</input>
+                    <br />
+                    <input id="RADIO_1626100865751_1" type="radio" name="RADIO_1626100865751" value="extracellular (MRI)">extracellular (MRI)</input>
+                    <br />
+                    <input id="RADIO_1626100865751_2" type="radio" name="RADIO_1626100865751" value="hepatobiliary agent (MRI)">hepatobiliary agent (MRI)</input>
+                </span>
+            </p>
+            <p title="Optional. Describe all that apply; e.g. injection dose, injection rate, volume and rate of saline flush, scan delay to arterial phase, timing method.">
+                <label for="TEXT_1626100865755">Other technical details :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865755" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="Exam is technically adequate and meets minimum LI-RADS technical recommendations.">
+                <label for="RADIO_1626100865756">Technical quality adequate :-</label>
+                <span id="RADIO_1626100865756" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865756_0" type="radio" name="RADIO_1626100865756" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865756_1" type="radio" name="RADIO_1626100865756" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865760">If no, describe reason :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865760" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="Optional. Subtraction images were used to assess APHE or &quot;washout&quot;.">
+                <label for="RADIO_1626100865761">Use of vascular subtraction :-</label>
+                <span id="RADIO_1626100865761" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865761_0" type="radio" name="RADIO_1626100865761" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865761_1" type="radio" name="RADIO_1626100865761" value="no">no</input>
+                </span>
+            </p>
+            <p title="Optional. If subtraction images were used, clarify what is was used for. ">
+                <label for="RADIO_1626100865766">Purpose of vascular subtraction :-</label>
+                <span id="RADIO_1626100865766" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865766_0" type="radio" name="RADIO_1626100865766" value="APHE" checked="">APHE</input>
+                    <br />
+                    <input id="RADIO_1626100865766_1" type="radio" name="RADIO_1626100865766" value="washout">washout</input>
+                    <br />
+                    <input id="RADIO_1626100865766_2" type="radio" name="RADIO_1626100865766" value="APHE and washout">APHE and washout</input>
+                </span>
+            </p>
+        </section>
+        <section id="clinicalInformation" class="level1" data-section-name="Clinical Information">
+            <header class="level1">
+                Clinical Information
+            </header>
+            <p title=" i.e. criteria for LI-RADS population">
+                <label for="CHECKBOX_1626100865721">Risk factors for HCC :-</label>
+                <span id="CHECKBOX_1626100865721" name="" data-field-type="CHECKBOX" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="CHECKBOX_1626100865721_0" type="checkbox" name="CHECKBOX_1626100865721" value="cirrhosis" checked="">cirrhosis</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865721_1" type="checkbox" name="CHECKBOX_1626100865721" value="HBV">HBV</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865721_2" type="checkbox" name="CHECKBOX_1626100865721" value="current HCC">current HCC</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="clinicalInformationText">Etiology of liver disease :-</label>
+                <textarea rows="3" cols="100" id="clinicalInformationText" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE">List all that apply.</textarea>
+            </p>
+            <section id="SECTION_HEADER_1626100865726" class="level2" data-section-name="Treatment History">
+                <header class="level2">
+                    Treatment History
+                </header>
+            </section>
+            <p title="List all that apply.">
+                <label for="TEXT_1626100865729">Treatment modality</label>
+                <input type="text" id="TEXT_1626100865729" name="" data-field-type="TEXT" data-field-completion-action="NONE" value="" />
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865730">Treatment date(s)</label>
+                <input type="text" id="TEXT_1626100865730" name="" data-field-type="TEXT" data-field-completion-action="NONE" value="" />
+            </p>
+            <section id="SECTION_HEADER_1626100865731" class="level2" data-section-name="Pathology">
+                <header class="level2">
+                    Pathology
+                </header>
+            </section>
+            <p title="">
+                <label for="TEXT_1626878201566">Diagnosis</label>
+                <input type="text" id="TEXT_1626878201566" name="" data-field-type="TEXT" data-field-completion-action="NONE" value="" />
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865732">Date of pathology :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865732" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+        </section>
+        <section id="comparisons" class="level1" data-section-name="Comparison">
+            <label class="level1">
+                Comparison :-
+            </label>
+            <p title="">
+                <textarea rows="3" cols="100" id="comparisonsText" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="CHECKBOX_1626100865734">Exam modality :-</label>
+                <span id="CHECKBOX_1626100865734" name="" data-field-type="CHECKBOX" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="CHECKBOX_1626100865734_0" type="checkbox" name="CHECKBOX_1626100865734" value="CT" checked="">CT</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865734_1" type="checkbox" name="CHECKBOX_1626100865734" value="MRI">MRI</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865737">Type of contrast :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865737" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865738">Date of prior exam :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865738" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+        </section>
+        <section id="findings" class="level1" data-section-name="Findings">
+            <label class="level1">
+                Findings :-
+            </label>
+            <section id="SECTION_HEADER_1626100865770" class="level2" data-section-name="Background Liver">
+                <label class="level2">
+                    Background Liver
+                </label>
+            </section>
+            <p title="">
+                <label for="RADIO_1626100865771">Features of cirrhosis</label>
+                <span id="RADIO_1626100865771" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865771_0" type="radio" name="RADIO_1626100865771" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865771_1" type="radio" name="RADIO_1626100865771" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865774">Steatosis</label>
+                <span id="RADIO_1626100865774" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865774_0" type="radio" name="RADIO_1626100865774" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865774_1" type="radio" name="RADIO_1626100865774" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865777">Siderosis</label>
+                <span id="RADIO_1626100865777" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865777_0" type="radio" name="RADIO_1626100865777" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865777_1" type="radio" name="RADIO_1626100865777" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865780">Postsurgical changes </label>
+                <span id="RADIO_1626100865780" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865780_0" type="radio" name="RADIO_1626100865780" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865780_1" type="radio" name="RADIO_1626100865780" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865783">Postsurgical changes description :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865783" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865784">Observation :-</label>
+                <span id="RADIO_1626100865784" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865784_0" type="radio" name="RADIO_1626100865784" value="individually" checked="">individually</input>
+                    <br />
+                    <input id="RADIO_1626100865784_1" type="radio" name="RADIO_1626100865784" value="in agregate">in agregate</input>
+                    <br />
+                    <input id="RADIO_1626100865784_2" type="radio" name="RADIO_1626100865784" value="individually and in aggregate">individually and in aggregate</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865788">Observation number</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865788" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="CHECKBOX_1626100865789">Segment location :-</label>
+                <span id="CHECKBOX_1626100865789" name="" data-field-type="CHECKBOX" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="CHECKBOX_1626100865789_0" type="checkbox" name="CHECKBOX_1626100865789" value="I" checked="">I</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_1" type="checkbox" name="CHECKBOX_1626100865789" value="II">II</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_2" type="checkbox" name="CHECKBOX_1626100865789" value="III">III</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_3" type="checkbox" name="CHECKBOX_1626100865789" value="Iva">Iva</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_4" type="checkbox" name="CHECKBOX_1626100865789" value="Ivb">Ivb</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_5" type="checkbox" name="CHECKBOX_1626100865789" value="V">V</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_6" type="checkbox" name="CHECKBOX_1626100865789" value="VI">VI</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_7" type="checkbox" name="CHECKBOX_1626100865789" value="VII">VII</input>
+                    <br />
+                    <input id="CHECKBOX_1626100865789_8" type="checkbox" name="CHECKBOX_1626100865789" value="VIII">VIII</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865799">Size in cm</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865799" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865800">Size in mm</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865800" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865801">Image ID number</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865801" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865802">Series number</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865802" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865803">Tumor in vein</label>
+                <span id="RADIO_1626100865803" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865803_0" type="radio" name="RADIO_1626100865803" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865803_1" type="radio" name="RADIO_1626100865803" value="no">no</input>
+                </span>
+            </p>
+            <p title="List all that apply e.g., targetoid mass or nontargetoid mass with infiltrative appearance, marked diffusion restriction, necrosis or severe ischemia, or other features.">
+                <label for="TEXT_1626100865806">LR-M features :- </label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865806" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="Describe most likely etiology.">
+                <label for="TEXT_1626100865807">LR-M etiology :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865807" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865808">Nonrim APHE </label>
+                <span id="RADIO_1626100865808" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865808_0" type="radio" name="RADIO_1626100865808" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865808_1" type="radio" name="RADIO_1626100865808" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865811">Threshold growth</label>
+                <span id="RADIO_1626100865811" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865811_0" type="radio" name="RADIO_1626100865811" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865811_1" type="radio" name="RADIO_1626100865811" value="no">no</input>
+                    <br />
+                    <input id="RADIO_1626100865811_2" type="radio" name="RADIO_1626100865811" value="N/A">N/A</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865815">Washout</label>
+                <span id="RADIO_1626100865815" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865815_0" type="radio" name="RADIO_1626100865815" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865815_1" type="radio" name="RADIO_1626100865815" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865818">Enhancing capsule</label>
+                <span id="RADIO_1626100865818" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865818_0" type="radio" name="RADIO_1626100865818" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865818_1" type="radio" name="RADIO_1626100865818" value="no">no</input>
+                </span>
+            </p>
+            <p title="If applied.">
+                <label for="TEXT_1626100865821">Ancillary features :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865821" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865822">Favoring benignity</label>
+                <span id="RADIO_1626100865822" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865822_0" type="radio" name="RADIO_1626100865822" value="none" checked="">none</input>
+                    <br />
+                    <input id="RADIO_1626100865822_1" type="radio" name="RADIO_1626100865822" value="yes">yes</input>
+                </span>
+            </p>
+            <p title="If yes, list all that apply.">
+                <label for="TEXT_1626100865825">Favoring benignity :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865825" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865826">Favoring malignancy </label>
+                <span id="RADIO_1626100865826" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865826_0" type="radio" name="RADIO_1626100865826" value="none" checked="">none</input>
+                    <br />
+                    <input id="RADIO_1626100865826_1" type="radio" name="RADIO_1626100865826" value="yes">yes</input>
+                </span>
+            </p>
+            <p title="If yes, list all that apply.">
+                <label for="TEXT_1626100865829">Favoring malignancy :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865829" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="RADIO_1626100865830">Favoring HCC in particular</label>
+                <span id="RADIO_1626100865830" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865830_0" type="radio" name="RADIO_1626100865830" value="none" checked="">none</input>
+                    <br />
+                    <input id="RADIO_1626100865830_1" type="radio" name="RADIO_1626100865830" value="yes">yes</input>
+                </span>
+            </p>
+            <p title="If yes, list all that apply.">
+                <label for="TEXT_1626100865833">Favoring HCC in particular :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865833" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <section id="SECTION_HEADER_1626879268237" class="level2" data-section-name="Treated Observation">
+                <header class="level2">
+                    Treated Observation
+                </header>
+            </section>
+            <p title="">
+                <label for="RADIO_1626100865834">Treated observation</label>
+                <span id="RADIO_1626100865834" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865834_0" type="radio" name="RADIO_1626100865834" value="yes" checked="">yes</input>
+                    <br />
+                    <input id="RADIO_1626100865834_1" type="radio" name="RADIO_1626100865834" value="no">no</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865837">Size of equivocal or viable tumor</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865837" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865838">Pretreatment LR category and size :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865838" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865839">Treatment modality :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865839" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865840">Interim change :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865840" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <section id="SECTION_HEADER_1626100865841" class="level2" data-section-name="Observations Described in Aggregate">
+                <label class="level2">
+                    Observations Described in Aggregate
+                </label>
+            </section>
+            <p title="">
+                <label for="TEXT_1626100865842">Unique identifier :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865842" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865843">Overall size</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865843" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865844">Location :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865844" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865845">Imaging features :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865845" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="Describe relevant findings, e.g. patency, anatomic variants, etc.">
+                <label for="TEXT_1626100865846">Vascular :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865846" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <p title="Describe relevant findings, e.g. diffuse or focal dilatation, anatomic variants, etc.">
+                <label for="TEXT_1626100865847">Biliary :- </label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865847" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <section id="SECTION_HEADER_1626879268238" class="level2" data-section-name="Signs of Portal Hypertension">
+                
+            </section>
+            <p title="Describe relevant findings, e.g. varices, ascites, and splenomegaly.">
+                <label for="TEXT_1626100865848">Signs of portal hypertension :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865848" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <section id="SECTION_HEADER_1626879268239" class="level2" data-section-name="Extra Hepatic Findings">
+                </section>
+            <p title="Specify.">
+                <label for="TEXT_1626100865849">Extra-hepatic findings</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865849" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+        </section>
+        <section id="impression" class="level1" data-section-name="Impression">
+            <label class="level1">
+                Impression :-
+            </label>
+            <p title="LI-RADS v2018 category up to 5.">
+                <label for="RADIO_1626100865850">LI-RADS category per observation</label>
+                <span id="RADIO_1626100865850" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865850_0" type="radio" name="RADIO_1626100865850" value="LR-NC" checked="">LR-NC</input>
+                    <br />
+                    <input id="RADIO_1626100865850_1" type="radio" name="RADIO_1626100865850" value="LR-1">LR-1</input>
+                    <br />
+                    <input id="RADIO_1626100865850_2" type="radio" name="RADIO_1626100865850" value="LR-2">LR-2</input>
+                    <br />
+                    <input id="RADIO_1626100865850_3" type="radio" name="RADIO_1626100865850" value="LR-3">LR-3</input>
+                    <br />
+                    <input id="RADIO_1626100865850_4" type="radio" name="RADIO_1626100865850" value="LR-4">LR-4</input>
+                    <br />
+                    <input id="RADIO_1626100865850_5" type="radio" name="RADIO_1626100865850" value="LR-5">LR-5</input>
+                    <br />
+                    <input id="RADIO_1626100865850_6" type="radio" name="RADIO_1626100865850" value="LR-TIV">LR-TIV</input>
+                    <br />
+                    <input id="RADIO_1626100865850_7" type="radio" name="RADIO_1626100865850" value="LR-M">LR-M</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865859">Observation number :-</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865859" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="LI-RADS v2018 category up to 5.">
+                <label for="RADIO_1626100865860">LI-RADS category in aggregate</label>
+                <span id="RADIO_1626100865860" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865860_0" type="radio" name="RADIO_1626100865860" value="LR-NC" checked="">LR-NC</input>
+                    <br />
+                    <input id="RADIO_1626100865860_1" type="radio" name="RADIO_1626100865860" value="LR-1">LR-1</input>
+                    <br />
+                    <input id="RADIO_1626100865860_2" type="radio" name="RADIO_1626100865860" value="LR-2">LR-2</input>
+                    <br />
+                    <input id="RADIO_1626100865860_3" type="radio" name="RADIO_1626100865860" value="LR-3">LR-3</input>
+                    <br />
+                    <input id="RADIO_1626100865860_4" type="radio" name="RADIO_1626100865860" value="LR-4">LR-4</input>
+                    <br />
+                    <input id="RADIO_1626100865860_5" type="radio" name="RADIO_1626100865860" value="LR-5">LR-5</input>
+                    <br />
+                    <input id="RADIO_1626100865860_6" type="radio" name="RADIO_1626100865860" value="LR-TIV">LR-TIV</input>
+                    <br />
+                    <input id="RADIO_1626100865860_7" type="radio" name="RADIO_1626100865860" value="LR-M">LR-M</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865869">Observation number</label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865869" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="LI-RADS v2018. Currently not applicable for systemic therapy.">
+                <label for="RADIO_1626100865870">LI-RADS treatment response category per observation</label>
+                <span id="RADIO_1626100865870" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865870_0" type="radio" name="RADIO_1626100865870" value="LR-TR Nonviable" checked="">LR-TR Nonviable</input>
+                    <br />
+                    <input id="RADIO_1626100865870_1" type="radio" name="RADIO_1626100865870" value="LR-TR Equivocal">LR-TR Equivocal</input>
+                    <br />
+                    <input id="RADIO_1626100865870_2" type="radio" name="RADIO_1626100865870" value="LR-TR Viable">LR-TR Viable</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="TEXT_1626100865874">Observation number :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865874" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+            <section id="SECTION_HEADER_1626878201567" class="level2" data-section-name="HCC RADIOLOGICAL T-STAGE">
+                <header class="level2">
+                    HCC RADIOLOGICAL T-STAGE
+                </header>
+            </section>
+            <p title="Optional.">
+                <label for="RADIO_1626100865875">HCC radiologic T-stage</label>
+                <span id="RADIO_1626100865875" name="" data-field-type="RADIO" data-field-completion-action="NONE" value="">
+                    <br />
+                    <input id="RADIO_1626100865875_0" type="radio" name="RADIO_1626100865875" value="1" checked="">1</input>
+                    <br />
+                    <input id="RADIO_1626100865875_1" type="radio" name="RADIO_1626100865875" value="2">2</input>
+                    <br />
+                    <input id="RADIO_1626100865875_2" type="radio" name="RADIO_1626100865875" value="3">3</input>
+                    <br />
+                    <input id="RADIO_1626100865875_3" type="radio" name="RADIO_1626100865875" value="4">4</input>
+                </span>
+            </p>
+            <p title="">
+                <label for="NUMBER_1626100865880">Observation number </label>
+                <span>
+                    <input type="number" step="1.0" data-field-units="" id="NUMBER_1626100865880" name="" data-field-type="NUMBER" data-field-completion-action="NONE" value="" />
+                </span>
+            </p>
+            <p title="Optional.">
+                <label for="TEXT_1626100865881">Management and follow-up recommendations :-</label>
+                <textarea rows="3" cols="100" id="TEXT_1626100865881" name="" data-field-type="TEXTAREA" data-field-completion-action="NONE"></textarea>
+            </p>
+        </section>
+        <input type="button" class="btn btn-secondary" onclick="saveProgress();" value="Save Progress" id="saveProgressButton">
+        <input type="button" class="btn btn-primary" onclick="GeneratePdf();" value="Submit Report" id="submitReportButton">
+    </form>
+    <!-- <script src="./report-Template/uploadPDF.js">  </script> -->
+
+
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-database.js"></script>
+
+
+<script>
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyCXxVm7oVpkuq0TPjGUs_sa4nsOTd8SmhE",
+        authDomain: "dicom-admin.firebaseapp.com",
+        databaseURL: "https://dicom-admin-default-rtdb.firebaseio.com",
+        projectId: "dicom-admin",
+        storageBucket: "dicom-admin.appspot.com",
+        messagingSenderId: "43752825231",
+        appId: "1:43752825231:web:6ad98d21150fd3e0f42bfa",
+        measurementId: "G-EZM15EBVGQ",
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+</script>
+
+<script>
+    var counter = 1;
+    function sanitizeKey(key) {
+    if (!key || key.trim() === "") {
+        return '';  // Return an empty string instead of '_'
+    }
+    return key.replace(/[.#$/\[\]]/g, '_');
+}
+
+function saveProgress() {
+    const formElements = document.querySelectorAll('#form-print input, #form-print textarea');
+    let formData = {}; // This will directly hold key-value pairs for Firebase
+
+    // Ensure patient name is always included
+    const patientNameElement = document.querySelector('input[type="text"]');
+    if (patientNameElement) {
+        formData['patientName'] = patientNameElement.value;
+    }
+
+    formElements.forEach(element => {
+        const sanitizedId = sanitizeKey(element.id);
+        if (sanitizedId) {  // Only add if the sanitized ID is valid
+            if (element.type === 'radio') {
+                if (element.checked) {
+                    formData[sanitizedId] = element.value;
+                }
+            } else {
+                formData[sanitizedId] = element.value;
+            }
+        }
+    });
+
+    // Use the HTML file name as a node under SavedProgress
+    const htmlFileName = window.location.pathname.split("/").pop().replace(".html", "");
+
+    // First, update the SavedProgress node
+    firebase.database().ref(`${FirebasePath}/SavedProgress/${htmlFileName}`).update(formData)
+        .then(() => {
+            console.log('Progress saved successfully.');
+            // Then, set the Report_Status to 'Read'
+            return firebase.database().ref(`${FirebasePath}`).update({ Report_Status: 'Read' });
+            console.log(FirebasePath,"Firebase")
+        })
+        .then(() => {
+            alert('Progress updated successfully.');
+            window.history.back();
+        })
+        .catch((error) => {
+            console.error('Error saving progress or updating Report_Status:', error);
+            alert('Error saving progress or updating Report_Status. Please try again.');
+        });
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const formElements = document.querySelectorAll('#form-print input, #form-print textarea');
+
+    // Use the HTML file name as a node under SavedProgress
+    const htmlFileName = window.location.pathname.split("/").pop().replace(".html", "");
+
+    // Retrieve saved data from Firebase
+    firebase.database().ref(`${FirebasePath}/SavedProgress/${htmlFileName}`).once('value').then((snapshot) => {
+        const savedData = snapshot.val();
+        if (savedData) {
+            formElements.forEach(element => {
+                const sanitizedId = sanitizeKey(element.id);
+                if (element.type === 'radio') {
+                    if (savedData[sanitizedId] === element.value) {
+                        element.checked = true;
+                    }
+                } else {
+                    element.value = savedData[sanitizedId] || '';
+                }
+            });
+
+            // Set the patient name if it's stored in savedData
+            const inputElement = document.querySelector('input[type="text"]');
+            if (inputElement && savedData['patientName']) {
+                inputElement.value = savedData['patientName'];
+            }
+
+        } else {
+            // If no saved data is found, set the formatted patient name
+            const inputElement = document.querySelector('input[type="text"]');
+            if (inputElement) { // Check if the input element exists
+                inputElement.value = formattedPatientName;
+            }
+        }
+    }).catch((error) => {
+        console.error('Error loading saved progress:', error);
+    });
+});
+function GeneratePdf() {
+    var element = document.getElementById("form-print");
+    var submitButton = document.getElementById("submitReportButton");
+    var saveButton = document.getElementById("saveProgressButton");
+    var opt = {
+        margin: [0.5, 0, 1, 0],
+        filename: 'myfile.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Show the overlay with progress bar
+    var overlay = document.getElementById("overlay");
+    var progressBar = document.getElementById("fileUploadProgress");
+    var progressText = document.getElementById("uploadPercentage");
+
+    // Hide the submit button before generating PDF
+    saveButton.style.display = "none";
+    submitButton.style.display = "none";
+
+    overlay.style.display = "flex"; // Show the overlay
+    progressBar.value = 0;
+    progressText.textContent = "0%";
+
+    // Generate a PDF Blob
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+        var blob = pdf.output('blob');
+        var randomName = "DoctorReport-" + generateUniqueId();
+
+        // Upload blob to Firebase Storage
+        var uploadTask = firebase.storage().ref(`${FirebasePath}/${randomName}.pdf`).put(blob);
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBar.value = progress;
+                progressText.textContent = Math.round(progress) + "%";
+            },
+            (error) => {
+                console.error('Upload failed', error);
+                overlay.style.display = "none"; // Hide the overlay on error
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('File available at', downloadURL);
+                    return firebase.database().ref(`${FirebasePath}`).update({ Dicom_ReportURL: downloadURL });
+                })
+                .then(() => {
+                    // Set the Report_Status to 'Final'
+                    return firebase.database().ref(`${FirebasePath}`).update({ Report_Status: 'Final' });
+                })
+                .then(() => {
+                    addReportTimestamp(FirebasePath,doctorName);
+                    alert("Report submitted successfully.");
+                    overlay.style.display = "none"; // Hide the overlay on success
+                    window.location.href = `https://easiofyhealth.netlify.app/DoctorPanel`;
+                })
+                .catch((error) => {
+                    console.error('Error updating database:', error);
+                    overlay.style.display = "none"; // Ensure overlay is hidden on database error
+                });
+            }
+        );
+    }).finally(function () {
+        // Show the submit button after PDF generation process
+        submitButton.style.display = "block";
+    });
+}
+
+    function generateUniqueId() {
+        return Date.now();
+    }
+</script>
+    
+      <!-- Overlay for Blur Effect -->
+<div id="overlay">
+    <!-- Progress Display Container -->
+    <div id="uploadProgressContainer">
+        <h3>Uploading Report...</h3>
+        <progress id="fileUploadProgress" value="0" max="100"></progress>
+        <span id="uploadPercentage">0%</span>
+    </div>
+  </div>
+  
+  <style>
+    /* ... your other styles ... */
+  
+    #overlay {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+      z-index: 2; /* Sit on top */
+      cursor: pointer; /* Add a pointer on hover */
+    }
+  
+    #uploadProgressContainer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 2;
+    }
+  
+    progress {
+      width: 100%; /* Full width */
+      height: 20px; /* Specified height */
+    }
+  </style>
+
+</body>
+</html>

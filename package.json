@@ -1,0 +1,44 @@
+{
+  "name": "dwv-jqmobile",
+  "version": "0.8.0-beta",
+  "description": "Medical viewer using DWV (DICOM Web Viewer) and jQuery Mobile.",
+  "keywords": [
+    "DICOM",
+    "medical",
+    "imaging"
+  ],
+  "license": "GPL-3.0",
+  "author": "ivmartel <ivmartel@gmail.com>",
+  "homepage": "https://ivmartel.github.io/dwv-jqmobile/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ivmartel/dwv-jqmobile.git"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "@aws-sdk/s3-request-presigner": "^3.758.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "dwv": "^0.35.0-beta.16",
+    "express": "^4.21.2",
+    "i18next": "~23.5.1",
+    "i18next-browser-languagedetector": "~7.1.0",
+    "i18next-http-backend": "~2.2.0",
+    "jquery": "2.1.4",
+    "nprogress": "^0.2.0"
+  },
+  "devDependencies": {
+    "grunt": "^1.4.0",
+    "grunt-cli": "^1.4.2",
+    "grunt-contrib-connect": "^4.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-eslint": "^24.0.0"
+  },
+  "scripts": {
+    "start": "grunt start",
+    "dev": "grunt dev",
+    "lint": "grunt lint",
+    "test": "grunt test --verbose"
+  }
+}

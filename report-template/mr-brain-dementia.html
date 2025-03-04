@@ -1,0 +1,378 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="base mri brain dementia" name="dcterms.title" />
+    <meta
+      content="b0e5f940-1324-4666-80f7-aeda4839c33a"
+      name="dcterms.identifier"
+    />
+    <meta content="en" name="dcterms.language" />
+    <meta content="2019-01-31" name="dcterms.date" />
+    <meta content="Nuance System" name="dcterms.creator" />
+    <title>base mri brain dementia</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+      rel="stylesheet"
+    />
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.8.1/html2pdf.bundle.min.js" integrity="sha512vDKWohFHe2vkVWXHp3tKvIxxXg0pJxeid5eo+UjdjME3DBFBn2F8yWOE0XmiFcFbXxrEOR1JriWEno5Ckpn15A==" crossorigin="anonymous"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+    <script src="Report_Timestamp.js"></script>
+    <style>
+      textarea {
+        width: -webkit-fill-available;
+      }
+      #form-print {
+        width: 80%;
+        padding: 11px;
+        background-color: #7e7e7e59;
+        border: 2px solid darkgray;
+        margin-right: auto;
+        margin: auto;
+      }
+      .titleH3 {
+        padding: 10px;
+        text-align: center;
+        text-decoration-line: underline;
+      }
+
+      label {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      let FirebasePath = urlParams.get("path");
+      const doctorName = urlParams.get("DoctorName");
+
+      const pathArray = FirebasePath.split("/");
+      const patient = pathArray[pathArray.length - 2];
+      const patientParts = patient.split("-").map((part) => part.trim());
+      let formattedPatientName;
+
+      // More robust check for repeated "Patient" parts
+      if (
+        patientParts.length > 2 &&
+        patientParts[0].toLowerCase() === "patient" &&
+        patientParts[1].toLowerCase() === "patient"
+      ) {
+        // If 'Patient' is repeated, format as "Patient - [Last Part]"
+        formattedPatientName = patientParts.slice(2).join(" - ");
+      } else {
+        // Use the name after "Patient -", or the full name if the condition doesn't match
+        formattedPatientName = patientParts.slice(1).join(" - ");
+      }
+
+      console.log("Formatted patient name ---", formattedPatientName);
+
+      // Set the formatted name to the input element once the DOM is fully loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputElement = document.querySelector('input[type="text"]');
+        if (inputElement) {
+          // Check if the input element exists
+          inputElement.value = formattedPatientName;
+        }
+      });
+    </script>
+
+    <form id="form-print" enctype="text/plain" class="form-control">
+      <h3 class="titleH3">MR Brain Dementia</h3>
+      <h6 id="patientName">Patient Name: <input type="text" /></h6>
+
+      <section data-section-name="MRI BRAIN WITHOUT CONTRAST">
+        <header class="Level1">MRI BRAIN WITHOUT CONTRAST</header>
+        <p>
+          <label>HISTORY:</label>
+          <textarea
+            rows="3"
+            cols="100"
+            id="TEXT_1626100865755"
+            name=""
+            data-field-type="TEXTAREA"
+            data-field-completion-action="NONE"
+          ></textarea>
+        </p>
+      </section>
+      <section data-section-name="TECHNIQUE:">
+        <header class="Level1">TECHNIQUE:</header>
+        <p>
+          <label
+            >MR images of the brain were acquired without intravenous
+            contrast.</label
+          ><br /><label>COMPARISON: </label
+          ><input type="text" name="Comparison" value="None available." />
+        </p>
+      </section>
+      <section data-section-name="FINDINGS:">
+        <header class="Level1">FINDINGS:</header>
+        <p>
+          <label>BRAIN VOLUME: </label
+          ><select name="atrophy">
+            <option name="" value="">No age-significant</option>
+            <option name="" value="">Mild</option>
+            <option name="" value="">Moderate</option>
+            <option name="" value="">Severe</option>
+          </select>
+        </p>
+        <p>
+          <label> atrophy. </label
+          ><select name="location">
+            <option name="" value="" selected="">
+              Global without lobar predilection or asymmetry.
+            </option>
+            <option name="regional" value="regional">Regional atrophy,</option>
+            <option name="" value="" selected=""></option>
+          </select>
+        </p>
+        <p>
+          <label>HIPPOCAMPAL VOLUME: </label
+          ><select name="hippocampal volume">
+            <option name="" value="">Normal.</option>
+            <option name="" value="">Mildly reduced.</option>
+            <option name="" value="">Moderately reduced.</option>
+            <option name="" value="">Severely reduced.</option>
+          </select>
+        </p>
+        <p>
+          <label>BRAINSTEM/CEREBELLUM: </label
+          ><input
+            type="text"
+            name="brainstem cerebellum"
+            value="Normal volume and signal intensity. No imaging findings of progressive supranuclear palsy, multiple system atrophy, or other primary cerebellar neurodegenerative condition."
+          />
+        </p>
+        <p>
+          <label>CORTEX/BASAL GANGLIA: </label
+          ><input
+            type="text"
+            name="cortext basal ganglia"
+            value="No evidence of prior insult, abnormal mineralization, prion disease, or autoimmune encephalitis."
+          />
+        </p>
+      </section>
+      <section data-section-name="ISCHEMIA:">
+        <header class="Level1">ISCHEMIA:</header>
+        <p>
+          <label>Infarction: </label
+          ><input
+            type="text"
+            name="infarct, attention angular gyrus, thalamus, basal forebrain, PCA territory, ACA territory"
+            value="None."
+          />
+        </p>
+        <p>
+          <label>Chronic Small Vessel Disease: </label
+          ><select name="WM, with attention to the deep component]">
+            <option name="" value="">Absent.</option>
+            <option name="" value="">Mild.</option>
+            <option name="" value="">Moderate.</option>
+            <option name="" value="">Severe.</option>
+          </select>
+        </p>
+        <p>
+          <label>CEREBRAL MICROHEMORRHAGES: </label
+          ><input
+            type="text"
+            name="microhemorrhage, attention location and pattern"
+            value="None."
+          />
+        </p>
+        <p>
+          <label>MASS: </label><input type="text" name="mass?" value="None." />
+        </p>
+        <p>
+          <label>VENTRICLES: </label
+          ><select name="ventricles">
+            <option name="" value="">No hydrocephalus.</option>
+            <option name="" value="">Ex-vacuo dilatation.</option>
+            <option name="Hydrocephalus" value="Hydrocephalus">
+              Hydrocephalus,
+            </option>
+          </select>
+        </p>
+        <p>
+          <label>EXTRA-AXIAL FLUID COLLECTIONS: </label
+          ><input type="text" name="extra-axial" value="None." />
+        </p>
+        <p>
+          <label>OTHER: </label><input type="text" name="other" value="None" />
+        </p>
+      </section>
+      <section data-section-name="IMPRESSION:">
+        <header class="Level1">IMPRESSION:</header>
+        <p><textarea name="impression">Normal MRI brain.</textarea></p>
+      </section>
+      <input
+        type="button"
+        class="btn btn-primary"
+        onclick="GeneratePdf();"
+        value="Submit Report"
+        id="submitReportButton"
+      />
+    </form>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.0/firebase-database.js"></script>
+
+    <script>
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyCXxVm7oVpkuq0TPjGUs_sa4nsOTd8SmhE",
+        authDomain: "dicom-admin.firebaseapp.com",
+        databaseURL: "https://dicom-admin-default-rtdb.firebaseio.com",
+        projectId: "dicom-admin",
+        storageBucket: "dicom-admin.appspot.com",
+        messagingSenderId: "43752825231",
+        appId: "1:43752825231:web:6ad98d21150fd3e0f42bfa",
+        measurementId: "G-EZM15EBVGQ",
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.1/html2pdf.bundle.min.js"
+      integrity="sha512vDKWohFHe2vkVWXHp3tKvIxxXg0pJxeid5eo+UjdjME3DBFBn2F8yWOE0XmiFcFbXxrEOR1JriWEno5Ckpn15A=="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      var counter = 1;
+
+      function GeneratePdf() {
+        var element = document.getElementById("form-print");
+        var submitButton = document.getElementById("submitReportButton");
+        var opt = {
+          margin: [0.5, 0, 1, 0],
+          filename: "myfile.pdf",
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        };
+
+        // Show the overlay with progress bar
+        var overlay = document.getElementById("overlay");
+        var progressBar = document.getElementById("fileUploadProgress");
+        var progressText = document.getElementById("uploadPercentage");
+
+        // Hide the submit button before generating PDF
+        submitButton.style.display = "none";
+
+        overlay.style.display = "flex"; // Show the overlay
+        progressBar.value = 0;
+        progressText.textContent = "0%";
+
+        // Generate a PDF Blob
+        html2pdf()
+          .set(opt)
+          .from(element)
+          .toPdf()
+          .get("pdf")
+          .then(function (pdf) {
+            var blob = pdf.output("blob");
+            var randomName = "DoctorReport-" + generateUniqueId();
+
+            // Upload blob to Firebase Storage
+            var uploadTask = firebase
+              .storage()
+              .ref(`${FirebasePath}/${randomName}.pdf`)
+              .put(blob);
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                var progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBar.value = progress;
+                progressText.textContent = Math.round(progress) + "%";
+              },
+              (error) => {
+                console.error("Upload failed", error);
+                overlay.style.display = "none"; // Hide the overlay on error
+              },
+              () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                  console.log("File available at", downloadURL);
+                  firebase
+                    .database()
+                    .ref(`${FirebasePath}`)
+                    .update({ Dicom_ReportURL: downloadURL })
+                    .then(() => {
+                      addReportTimestamp(FirebasePath, doctorName);
+                      alert("Report submitted successfully.");
+                      overlay.style.display = "none"; // Hide the overlay on success
+                      window.location.href = `https://easiofyhealth.netlify.app/DoctorPanel`;
+                    })
+                    .catch((error) => {
+                      console.error("Error updating database:", error);
+                      overlay.style.display = "none"; // Ensure overlay is hidden on database error
+                    });
+                });
+              }
+            );
+          })
+          .finally(function () {
+            // Show the submit button after PDF generation process
+            submitButton.style.display = "block";
+          });
+      }
+
+      function generateUniqueId() {
+        return Date.now();
+      }
+    </script>
+
+    <!-- Overlay for Blur Effect -->
+    <div id="overlay">
+      <!-- Progress Display Container -->
+      <div id="uploadProgressContainer">
+        <h3>Uploading Report...</h3>
+        <progress id="fileUploadProgress" value="0" max="100"></progress>
+        <span id="uploadPercentage">0%</span>
+      </div>
+    </div>
+
+    <style>
+      /* ... your other styles ... */
+
+      #overlay {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        z-index: 2; /* Sit on top */
+        cursor: pointer; /* Add a pointer on hover */
+      }
+
+      #uploadProgressContainer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        z-index: 2;
+      }
+
+      progress {
+        width: 100%; /* Full width */
+        height: 20px; /* Specified height */
+      }
+    </style>
+  </body>
+</html>
