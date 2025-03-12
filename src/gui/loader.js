@@ -15,9 +15,9 @@ dwvjq.gui.Loadbox = function (app) {
   this.setup = function (list) {
     // loader select
     var loaderSelector = dwvjq.html.createHtmlSelect(
-      'loaderSelect',
+      "loaderSelect",
       list,
-      'io'
+      "io"
     );
     loaderSelector.onchange = function (event) {
       // show tool gui
@@ -28,7 +28,7 @@ dwvjq.gui.Loadbox = function (app) {
     };
 
     // get node
-    var node = document.getElementById('dwv-loaderlist');
+    var node = document.getElementById("dwv-loaderlist");
     // clear it
     while (node.hasChildNodes()) {
       node.removeChild(node.firstChild);
@@ -43,9 +43,9 @@ dwvjq.gui.Loadbox = function (app) {
     var first = true;
     for (var key in list) {
       var name = list[key];
-      var guiClass = name + 'Load';
-      if (typeof dwvjq.gui[guiClass] === 'undefined') {
-        console.warn('Could not create unknown loader gui: ' + guiClass);
+      var guiClass = name + "Load";
+      if (typeof dwvjq.gui[guiClass] === "undefined") {
+        console.warn("Could not create unknown loader gui: " + guiClass);
         continue;
       }
       var gui = new dwvjq.gui[guiClass](app);
@@ -74,7 +74,7 @@ dwvjq.gui.FileLoad = function (app) {
    * @param {Object} event The change event.
    */
   function onchangeinternal(event) {
-    if (typeof self.onchange === 'function') {
+    if (typeof self.onchange === "function") {
       self.onchange(event);
     }
     app.loadFiles(event.target.files);
@@ -85,22 +85,22 @@ dwvjq.gui.FileLoad = function (app) {
    */
   this.setup = function () {
     // input
-    var fileLoadInput = document.createElement('input');
+    var fileLoadInput = document.createElement("input");
     fileLoadInput.onchange = onchangeinternal;
-    fileLoadInput.type = 'file';
+    fileLoadInput.type = "file";
     fileLoadInput.multiple = true;
-    fileLoadInput.className = 'imagefiles';
-    fileLoadInput.setAttribute('data-clear-btn', 'true');
-    fileLoadInput.setAttribute('data-mini', 'true');
+    fileLoadInput.className = "imagefiles";
+    fileLoadInput.setAttribute("data-clear-btn", "true");
+    fileLoadInput.setAttribute("data-mini", "true");
 
     // associated div
-    var fileLoadDiv = document.createElement('div');
-    fileLoadDiv.className = 'imagefilesdiv';
-    fileLoadDiv.style.display = 'none';
+    var fileLoadDiv = document.createElement("div");
+    fileLoadDiv.className = "imagefilesdiv";
+    fileLoadDiv.style.display = "none";
     fileLoadDiv.appendChild(fileLoadInput);
 
     // node
-    var node = document.getElementById('dwv-loaderlist');
+    var node = document.getElementById("dwv-loaderlist");
     // append
     node.appendChild(fileLoadDiv);
     // refresh
@@ -113,9 +113,9 @@ dwvjq.gui.FileLoad = function (app) {
    */
   this.display = function (bool) {
     // file div element
-    var node = document.getElementById('dwv-loaderlist');
-    var filediv = node.getElementsByClassName('imagefilesdiv')[0];
-    filediv.style.display = bool ? '' : 'none';
+    var node = document.getElementById("dwv-loaderlist");
+    var filediv = node.getElementsByClassName("imagefilesdiv")[0];
+    filediv.style.display = bool ? "" : "none";
   };
 }; // class dwvjq.gui.FileLoad
 
@@ -132,7 +132,7 @@ dwvjq.gui.FolderLoad = function (app) {
    * @param {Object} event The change event.
    */
   function onchangeinternal(event) {
-    if (typeof self.onchange === 'function') {
+    if (typeof self.onchange === "function") {
       self.onchange(event);
     }
     app.loadFiles(event.target.files);
@@ -143,23 +143,23 @@ dwvjq.gui.FolderLoad = function (app) {
    */
   this.setup = function () {
     // input
-    var fileLoadInput = document.createElement('input');
+    var fileLoadInput = document.createElement("input");
     fileLoadInput.onchange = onchangeinternal;
-    fileLoadInput.type = 'file';
+    fileLoadInput.type = "file";
     fileLoadInput.multiple = true;
     fileLoadInput.webkitdirectory = true;
-    fileLoadInput.className = 'imagefolder';
-    fileLoadInput.setAttribute('data-clear-btn', 'true');
-    fileLoadInput.setAttribute('data-mini', 'true');
+    fileLoadInput.className = "imagefolder";
+    fileLoadInput.setAttribute("data-clear-btn", "true");
+    fileLoadInput.setAttribute("data-mini", "true");
 
     // associated div
-    var folderLoadDiv = document.createElement('div');
-    folderLoadDiv.className = 'imagefolderdiv';
-    folderLoadDiv.style.display = 'none';
+    var folderLoadDiv = document.createElement("div");
+    folderLoadDiv.className = "imagefolderdiv";
+    folderLoadDiv.style.display = "none";
     folderLoadDiv.appendChild(fileLoadInput);
 
     // node
-    var node = document.getElementById('dwv-loaderlist');
+    var node = document.getElementById("dwv-loaderlist");
     // append
     node.appendChild(folderLoadDiv);
     // refresh
@@ -172,9 +172,9 @@ dwvjq.gui.FolderLoad = function (app) {
    */
   this.display = function (bool) {
     // file div element
-    var node = document.getElementById('dwv-loaderlist');
-    var folderdiv = node.getElementsByClassName('imagefolderdiv')[0];
-    folderdiv.style.display = bool ? '' : 'none';
+    var node = document.getElementById("dwv-loaderlist");
+    var folderdiv = node.getElementsByClassName("imagefolderdiv")[0];
+    folderdiv.style.display = bool ? "" : "none";
   };
 }; // class dwvjq.gui.FileLoad
 
@@ -191,7 +191,7 @@ dwvjq.gui.UrlLoad = function (app) {
    * @param {Object} event The change event.
    */
   function onchangeinternal(event) {
-    if (typeof self.onchange === 'function') {
+    if (typeof self.onchange === "function") {
       self.onchange(event);
     }
     app.loadURLs([event.target.value]);
@@ -202,21 +202,21 @@ dwvjq.gui.UrlLoad = function (app) {
    */
   this.setup = function () {
     // input
-    var urlLoadInput = document.createElement('input');
+    var urlLoadInput = document.createElement("input");
     urlLoadInput.onchange = onchangeinternal;
-    urlLoadInput.type = 'url';
-    urlLoadInput.className = 'imageurl';
-    urlLoadInput.setAttribute('data-clear-btn', 'true');
-    urlLoadInput.setAttribute('data-mini', 'true');
+    urlLoadInput.type = "url";
+    urlLoadInput.className = "imageurl";
+    urlLoadInput.setAttribute("data-clear-btn", "true");
+    urlLoadInput.setAttribute("data-mini", "true");
 
     // associated div
-    var urlLoadDiv = document.createElement('div');
-    urlLoadDiv.className = 'imageurldiv';
-    urlLoadDiv.style.display = 'none';
+    var urlLoadDiv = document.createElement("div");
+    urlLoadDiv.className = "imageurldiv";
+    urlLoadDiv.style.display = "none";
     urlLoadDiv.appendChild(urlLoadInput);
 
     // node
-    var node = document.getElementById('dwv-loaderlist');
+    var node = document.getElementById("dwv-loaderlist");
     // append
     node.appendChild(urlLoadDiv);
     // refresh
@@ -229,8 +229,8 @@ dwvjq.gui.UrlLoad = function (app) {
    */
   this.display = function (bool) {
     // url div element
-    var node = document.getElementById('dwv-loaderlist');
-    var urldiv = node.getElementsByClassName('imageurldiv')[0];
-    urldiv.style.display = bool ? '' : 'none';
+    var node = document.getElementById("dwv-loaderlist");
+    var urldiv = node.getElementsByClassName("imageurldiv")[0];
+    urldiv.style.display = bool ? "" : "none";
   };
 }; // class dwvjq.gui.UrlLoad

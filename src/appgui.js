@@ -115,47 +115,12 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       infoController.toggleListeners();
     };
 
-    // var toggleSaveState = document.createElement("a");
-    // toggleSaveState.setAttribute(
-    //   "class",
-    //   buttonClass + " download-state ui-icon-action"
-    // );
-    // toggleSaveState.setAttribute("title", "Save Annotations"); // Tooltip
-
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const urlPath = urlParams.get("Patient");
     const FirebasePath = urlPath.replace(/\/folder_.*$/, "");
     const AnnotationPath = `${FirebasePath.replace(/[/]+$/, "")}/Annotations`;
     let currentSeries = "";
-
-    // toggleSaveState.onclick = function () {
-    //   if (currentSeries) {
-    //     var stateJson = app.getJsonState();
-    //     var database = window.firebaseApp.database();
-    //     var seriesAnnotationPath = `${AnnotationPath}/${currentSeries}/AnnotationJson`;
-
-    //     database
-    //       .ref(seriesAnnotationPath)
-    //       .set(stateJson)
-    //       .then(() => {
-    //         alert("Annotation is saved for " + currentSeries);
-    //         console.log(
-    //           "State saved to Firebase Realtime Database for series:",
-    //           currentSeries
-    //         );
-    //       })
-    //       .catch((error) => {
-    //         console.error("Error saving state:", error);
-    //       });
-    //   } else {
-    //     alert("Please select a series to save annotations.");
-    //   }
-    // };
-
-    // Function to set the current series being viewed
-
-    //
 
     /* button creation for annotation*/
     var toggleSaveState = document.createElement("a");
@@ -164,50 +129,6 @@ dwvjq.gui.ToolboxContainer = function (app, infoController) {
       buttonClass + " download-state ui-icon-action"
     );
     toggleSaveState.setAttribute("title", "Save Annotation"); // Tooltip
-
-    /* function for annotation*/
-    // toggleSaveState.onclick = function () {
-    //   // 1) Retrieve the annotationGroup and dataId from the app
-    //   var dataIds = app.getDataIds();
-    //   var annotationGroup;
-    //   var dataId;
-
-    //   for (var j = 0; j < dataIds.length; ++j) {
-    //     var ag = app.getData(dataIds[j]).annotationGroup;
-    //     if (typeof ag !== "undefined") {
-    //       annotationGroup = ag;
-    //       dataId = dataIds[j];
-    //       break; // Found it; break out
-    //     }
-    //   }
-    //   if (!annotationGroup) {
-    //     alert("No annotations found.");
-    //     return;
-    //   }
-
-    //   // 2) Convert annotation to DICOM SR
-    //   var factory = new dwv.AnnotationGroupFactory();
-    //   var dicomElements = factory.toDicom(annotationGroup);
-
-    //   // 3) Write to buffer
-    //   var writer = new dwv.DicomWriter();
-    //   let dicomBuffer = null;
-    //   try {
-    //     dicomBuffer = writer.getBuffer(dicomElements);
-    //   } catch (error) {
-    //     console.error(error);
-    //     alert(error.message);
-    //     return;
-    //   }
-
-    //   // 4) Create a Blob and trigger the download
-    //   var blob = new Blob([dicomBuffer], { type: "application/dicom" });
-    //   var element = document.createElement("a");
-    //   element.href = window.URL.createObjectURL(blob);
-    //   element.download = "dicom-sr-" + dataId + ".dcm";
-    //   element.click();
-    //   URL.revokeObjectURL(element.href);
-    // };
 
     toggleSaveState.onclick = function () {
       // 1) Retrieve the annotationGroup and dataId from the app

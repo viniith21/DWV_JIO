@@ -1,0 +1,13 @@
+MRI files:
+https://drishtichrkdt.s3.ap-south-1.amazonaws.com/easiofy2DImages/1741690951185-ankush.zip
+XRAY:-
+https://drishtichrkdt.s3.ap-south-1.amazonaws.com/easiofy2DImages/1741694017923-PARESH-DAS.zip
+XRAY2- 
+https://drishtichrkdt.s3.ap-south-1.amazonaws.com/easiofy2DImages/1741694004099-BIRENDRA-BARUAH.zip
+
+
+
+https://github.com/ivmartel/dwv-jqmobile
+https://ivmartel.github.io/dwv-jqmobile/demo/stable/?input=https://drishtichrkdt.s3.ap-south-1.amazonaws.com/easiofy2DImages/1741690951185-ankush.zip
+
+/?InstituteName=""&DocName=""&data=ZipUrl

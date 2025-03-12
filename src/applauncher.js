@@ -73,6 +73,83 @@ function analyzeViewEvents(currentData) {
 
 // Initialize the application
 function startApp() {
+  /**
+   * Fetch a remote ZIP file containing .dcm files, unzip them, and load into DWV.
+   *
+   * @param {string} zipUrl - The URL of the ZIP file (e.g. from ?data=...).
+   * @param {dwv.App} dwvApp - Your DWV app instance (e.g. myapp).
+   */
+  async function loadDicomFromRemoteZip(zipUrl, dwvApp) {
+    try {
+      console.log("Fetching and loading ZIP from:", zipUrl);
+
+      const response = await fetch(zipUrl);
+      if (!response.ok) {
+        throw new Error("Failed to fetch ZIP: " + response.status);
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      const zip = await JSZip.loadAsync(arrayBuffer);
+
+      // Group DICOM files by series. We assume that the series are determined
+      // by the folder structure in the zip file. If no folder exists,
+      // all files are put into a default series.
+      const seriesMap = {};
+
+      const zipEntries = Object.keys(zip.files);
+      for (const entryName of zipEntries) {
+        if (entryName.toLowerCase().endsWith(".dcm")) {
+          // Determine series key: use folder name if available, else default.
+          let seriesKey = "default_series";
+          if (entryName.includes("/")) {
+            // Get the folder part (everything before the last '/')
+            seriesKey = entryName.substring(0, entryName.lastIndexOf("/"));
+          }
+          // Create array for series if it doesn't exist
+          if (!seriesMap[seriesKey]) {
+            seriesMap[seriesKey] = [];
+          }
+          const fileData = await zip.files[entryName].async("arraybuffer");
+          const file = new File([fileData], entryName, {
+            type: "application/dicom",
+            lastModified: Date.now(),
+          });
+          // Create an object URL for the file
+          const blobUrl = URL.createObjectURL(file);
+          seriesMap[seriesKey].push(blobUrl);
+        }
+      }
+
+      if (Object.keys(seriesMap).length === 0) {
+        alert("No .dcm files found in the provided ZIP.");
+        return;
+      }
+
+      // Initialize the folder selection interface
+      initializeFolderSelectionInterface();
+
+      // Iterate over each series and load it.
+      for (const seriesKey in seriesMap) {
+        const blobUrls = seriesMap[seriesKey];
+        // Load the first series into the main viewer.
+        // You can decide whether to load the first one immediately or all in a loop.
+        // In this example, we load each series into the sidebar for selection.
+        addSeriesToFolderSelectionInterface(seriesKey, blobUrls);
+        // Optionally, you could auto-load the first series:
+        // if (/* condition for first series, e.g. not already loaded */) {
+        //   dwvApp.loadURLs(blobUrls);
+        // }
+      }
+
+      // Optionally, you might want to auto-load the first series by default:
+      const firstSeriesKey = Object.keys(seriesMap)[0];
+      console.log("Auto-loading first series:", firstSeriesKey);
+      dwvApp.loadURLs(seriesMap[firstSeriesKey]);
+    } catch (err) {
+      console.error("Error loading ZIP:", err);
+      alert("Error loading ZIP: " + err.message);
+    }
+  }
+
   // logger
   dwv.logger.level = dwv.logger.levels.WARN;
 
@@ -81,6 +158,8 @@ function startApp() {
 
   // show dwv version
   dwvjq.gui.appendVersionHtml("0.8.0-beta");
+
+  // [ZIP Support Addition #1]: Check ?data= param near the end of startApp
 
   var url;
 
@@ -128,6 +207,27 @@ function startApp() {
   myapp.setDataViewConfigs(viewConfigs);
 
   myapp.getToolboxController().setSelectedTool("Scroll");
+
+  const urlParamss = new URLSearchParams(window.location.search);
+  const zipParam = urlParamss.get("data"); // e.g. ?data=someDicomZip.zip
+  if (zipParam) {
+    // If param ends with .zip, do special load
+    if (zipParam.toLowerCase().endsWith(".zip")) {
+      console.log("Detected ZIP in ?data= param:", zipParam);
+      // We'll define this function below
+      loadDicomFromRemoteZip(zipParam, myapp);
+    } else {
+      // If not a zip, you might want to load directly (optional)
+      // e.g., myapp.loadURLs([ zipParam ]);
+      console.log("Non-zip ?data= param. Doing direct load:", zipParam);
+      myapp.loadURLs([zipParam]);
+    }
+  } else {
+    console.log("No ?data= ZIP param found. Proceeding with existing logic.");
+    // If you have other existing logic that calls loadFromUri(...), keep it here.
+    // For example:
+    dwvjq.utils.loadFromUri(window.location.href, myapp);
+  }
 
   // Make layer groups droppable targets now that they exist
 
@@ -884,47 +984,6 @@ function startApp() {
       }
     } catch (error) {
       console.error("Error fetching series URLs:", error);
-      showLoadingIndicator(false);
-    }
-  }
-
-  async function fetchAndRenderAWSStructure() {
-    showLoadingIndicator(true);
-    try {
-      // Initialize the series interface.
-      initializeFolderSelectionInterface();
-      document.getElementById("folderSelectionContainer").style.display =
-        "block";
-
-      // Retrieve URL parameters for institute, doctor, and patient.
-      const urlParams = new URLSearchParams(window.location.search);
-      const instituteName = urlParams.get("InstituteName");
-      const doctorName = urlParams.get("DoctorName");
-      const patientName = urlParams.get("Patient"); //need PatientName
-
-      const endpointUrl = `http://localhost:5000/${instituteName}/${doctorName}/${patientName}`;
-
-      // Fetch the JSON data from the AWS endpoint
-      const response = await fetch(endpointUrl);
-      const data = await response.json();
-
-      // Iterate over each series returned from AWS
-      Object.keys(data.SeriesUrls).forEach((seriesName) => {
-        const seriesUrls = data.SeriesUrls[seriesName];
-        if (!firstSeriesLoaded) {
-          loadFolderContents(seriesUrls, seriesName, "myapp");
-          showLoadingIndicator(false);
-          firstSeriesLoaded = true;
-        }
-        addSeriesToFolderSelectionInterface(seriesName, seriesUrls);
-      });
-
-      if (!firstSeriesLoaded) {
-        console.error("No series found from AWS endpoint.");
-        showLoadingIndicator(false);
-      }
-    } catch (error) {
-      console.error("Error fetching series from AWS endpoint:", error);
       showLoadingIndicator(false);
     }
   }
