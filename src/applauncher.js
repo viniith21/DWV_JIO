@@ -80,6 +80,14 @@ function startApp() {
    * @param {dwv.App} dwvApp - Your DWV app instance (e.g. myapp).
    */
   async function loadDicomFromRemoteZip(zipUrl, dwvApp) {
+    // Extract InstituteName and DocName from the URL parameters.
+    const urlParams = new URLSearchParams(window.location.search);
+    const instituteName = urlParams.get("InstituteName");
+    const doctorName = urlParams.get("DocName");
+
+    console.log("InstituteName:", instituteName, "DoctorName:", doctorName);
+    // You can now use these values if required, e.g., to log or trigger further actions.
+
     try {
       console.log("Fetching and loading ZIP from:", zipUrl);
 
@@ -127,20 +135,13 @@ function startApp() {
       // Initialize the folder selection interface
       initializeFolderSelectionInterface();
 
-      // Iterate over each series and load it.
+      // Iterate over each series and add it to the interface.
       for (const seriesKey in seriesMap) {
         const blobUrls = seriesMap[seriesKey];
-        // Load the first series into the main viewer.
-        // You can decide whether to load the first one immediately or all in a loop.
-        // In this example, we load each series into the sidebar for selection.
         addSeriesToFolderSelectionInterface(seriesKey, blobUrls);
-        // Optionally, you could auto-load the first series:
-        // if (/* condition for first series, e.g. not already loaded */) {
-        //   dwvApp.loadURLs(blobUrls);
-        // }
       }
 
-      // Optionally, you might want to auto-load the first series by default:
+      // Optionally, auto-load the first series into the DWV viewer.
       const firstSeriesKey = Object.keys(seriesMap)[0];
       console.log("Auto-loading first series:", firstSeriesKey);
       dwvApp.loadURLs(seriesMap[firstSeriesKey]);
