@@ -80,13 +80,14 @@ function startApp() {
    * @param {dwv.App} dwvApp - Your DWV app instance (e.g. myapp).
    */
   async function loadDicomFromRemoteZip(zipUrl, dwvApp) {
-    // Extract InstituteName and DocName from the URL parameters.
+    // Extract InstituteName and DocName from URL parameters.
     const urlParams = new URLSearchParams(window.location.search);
     const instituteName = urlParams.get("InstituteName");
     const doctorName = urlParams.get("DocName");
 
     console.log("InstituteName:", instituteName, "DoctorName:", doctorName);
-    // Show the loader indicator before starting the load.
+
+    // Show the loader indicator before starting.
     showLoadingIndicator(true);
 
     try {
@@ -99,20 +100,26 @@ function startApp() {
       const arrayBuffer = await response.arrayBuffer();
       const zip = await JSZip.loadAsync(arrayBuffer);
 
-      // Group DICOM files by series.
-      // We assume that the series are determined by the folder structure in the zip file.
-      // If no folder exists, all files are put into a default series.
-      const seriesMap = {};
+      // Define series names to skip.
+      const skipSeriesNames = [
+        "<mip range>",
+        "mip range",
+        "phoenixzipreport",
+        "localizer",
+        "posdisp",
+      ];
 
+      // Group DICOM files by series. Series are determined by the folder structure.
+      // If no folder exists, files go into a default series.
+      const seriesMap = {};
       const zipEntries = Object.keys(zip.files);
+
       for (const entryName of zipEntries) {
         if (entryName.toLowerCase().endsWith(".dcm")) {
-          // Determine series key: use folder name if available, else default.
           let seriesKey = "default_series";
           if (entryName.includes("/")) {
             seriesKey = entryName.substring(0, entryName.lastIndexOf("/"));
           }
-          // Create array for series if it doesn't exist.
           if (!seriesMap[seriesKey]) {
             seriesMap[seriesKey] = [];
           }
@@ -136,18 +143,38 @@ function startApp() {
       // Initialize the folder selection interface.
       initializeFolderSelectionInterface();
 
-      // Iterate over each series and add it to the sidebar.
+      // Add each series to the sidebar if it doesn't match a skip name.
       for (const seriesKey in seriesMap) {
-        const blobUrls = seriesMap[seriesKey];
-        addSeriesToFolderSelectionInterface(seriesKey, blobUrls);
+        const lowerCaseSeriesKey = seriesKey.toLowerCase();
+        const shouldSkip = skipSeriesNames.some((skipStr) =>
+          lowerCaseSeriesKey.includes(skipStr)
+        );
+        if (shouldSkip) {
+          console.log(
+            `Skipping series "${seriesKey}" as it matches skip criteria.`
+          );
+          continue;
+        }
+        addSeriesToFolderSelectionInterface(seriesKey, seriesMap[seriesKey]);
       }
 
-      // Optionally, auto-load the first series into the DWV viewer.
-      const firstSeriesKey = Object.keys(seriesMap)[0];
-      console.log("Auto-loading first series:", firstSeriesKey);
-      dwvApp.loadURLs(seriesMap[firstSeriesKey]);
+      // Auto-load the first series that isn't skipped.
+      const validSeriesKeys = Object.keys(seriesMap).filter((seriesKey) => {
+        const lowerCaseSeriesKey = seriesKey.toLowerCase();
+        return !skipSeriesNames.some((skipStr) =>
+          lowerCaseSeriesKey.includes(skipStr)
+        );
+      });
 
-      // Hide the loader once everything is done.
+      if (validSeriesKeys.length > 0) {
+        const firstSeriesKey = validSeriesKeys[0];
+        console.log("Auto-loading first series:", firstSeriesKey);
+        dwvApp.loadURLs(seriesMap[firstSeriesKey]);
+      } else {
+        console.log("No valid series to load after applying skip criteria.");
+      }
+
+      // Hide the loader once processing is complete.
       showLoadingIndicator(false);
     } catch (err) {
       console.error("Error loading ZIP:", err);
