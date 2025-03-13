@@ -86,7 +86,8 @@ function startApp() {
     const doctorName = urlParams.get("DocName");
 
     console.log("InstituteName:", instituteName, "DoctorName:", doctorName);
-    // You can now use these values if required, e.g., to log or trigger further actions.
+    // Show the loader indicator before starting the load.
+    showLoadingIndicator(true);
 
     try {
       console.log("Fetching and loading ZIP from:", zipUrl);
@@ -98,9 +99,9 @@ function startApp() {
       const arrayBuffer = await response.arrayBuffer();
       const zip = await JSZip.loadAsync(arrayBuffer);
 
-      // Group DICOM files by series. We assume that the series are determined
-      // by the folder structure in the zip file. If no folder exists,
-      // all files are put into a default series.
+      // Group DICOM files by series.
+      // We assume that the series are determined by the folder structure in the zip file.
+      // If no folder exists, all files are put into a default series.
       const seriesMap = {};
 
       const zipEntries = Object.keys(zip.files);
@@ -109,10 +110,9 @@ function startApp() {
           // Determine series key: use folder name if available, else default.
           let seriesKey = "default_series";
           if (entryName.includes("/")) {
-            // Get the folder part (everything before the last '/')
             seriesKey = entryName.substring(0, entryName.lastIndexOf("/"));
           }
-          // Create array for series if it doesn't exist
+          // Create array for series if it doesn't exist.
           if (!seriesMap[seriesKey]) {
             seriesMap[seriesKey] = [];
           }
@@ -121,7 +121,7 @@ function startApp() {
             type: "application/dicom",
             lastModified: Date.now(),
           });
-          // Create an object URL for the file
+          // Create an object URL for the file.
           const blobUrl = URL.createObjectURL(file);
           seriesMap[seriesKey].push(blobUrl);
         }
@@ -129,13 +129,14 @@ function startApp() {
 
       if (Object.keys(seriesMap).length === 0) {
         alert("No .dcm files found in the provided ZIP.");
+        showLoadingIndicator(false);
         return;
       }
 
-      // Initialize the folder selection interface
+      // Initialize the folder selection interface.
       initializeFolderSelectionInterface();
 
-      // Iterate over each series and add it to the interface.
+      // Iterate over each series and add it to the sidebar.
       for (const seriesKey in seriesMap) {
         const blobUrls = seriesMap[seriesKey];
         addSeriesToFolderSelectionInterface(seriesKey, blobUrls);
@@ -145,9 +146,13 @@ function startApp() {
       const firstSeriesKey = Object.keys(seriesMap)[0];
       console.log("Auto-loading first series:", firstSeriesKey);
       dwvApp.loadURLs(seriesMap[firstSeriesKey]);
+
+      // Hide the loader once everything is done.
+      showLoadingIndicator(false);
     } catch (err) {
       console.error("Error loading ZIP:", err);
       alert("Error loading ZIP: " + err.message);
+      showLoadingIndicator(false);
     }
   }
 
